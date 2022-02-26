@@ -47,7 +47,7 @@ export default function App() {
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
     setMessage("");
-    setSpinnerOn();
+    setSpinnerOn(true);
 
     axios.post(loginUrl, {username, password})
       .then(res => {
@@ -58,7 +58,9 @@ export default function App() {
       .catch(err => {
         console.log(err);
       })
-    setSpinnerOff();  
+      .finally(() => {
+      setSpinnerOn(false)
+      }) 
   }
 
   const getArticles = () => {
@@ -82,6 +84,9 @@ export default function App() {
           debugger
         }
       })
+      .finally(() => {
+        setSpinnerOn(false)
+        })
   }
 
   const postArticle = ({title, text, topic}) => {
@@ -132,9 +137,8 @@ export default function App() {
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <React.StrictMode>
-      <Spinner 
-        spinnerOn={spinnerOn}
-      />
+      {spinnerOn === true ? 
+      <Spinner on={spinnerOn}/> : null}
       <Message 
         message={message}
       />
@@ -157,7 +161,7 @@ export default function App() {
               />
               <Articles 
                 articles={articles}
-                currentArticleId={setCurrentArticleId}
+                setCurrentArticleId={setCurrentArticleId}
                 getArticles={getArticles}
                 deleteArticle={deleteArticle}
                 message={setMessage}
