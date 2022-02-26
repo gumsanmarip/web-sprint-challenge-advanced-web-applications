@@ -4,7 +4,7 @@ import PT from 'prop-types'
 
 export default function Articles(props) {
   // ✨ where are my props? Destructure them here
-  const { articles, getArticles, deleteArticle, setCurrentArticleId } = props;
+  const { articles, getArticles, deleteArticle, currentArticleId, setCurrentArticleId } = props;
 
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
@@ -23,9 +23,9 @@ export default function Articles(props) {
     <div className="articles">
       <h2>Articles</h2>
       {
-        ![].length
+        !articles.length
           ? 'No articles yet'
-          : [].map(art => {
+          : articles.map(art => {
             return (
               <div className="article" key={art.article_id}>
                 <div>
@@ -34,8 +34,8 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={true} onClick={e => setArticleId(art.id)}>Edit</button>
-                  <button disabled={true} onClick={evt => deleteArticle(art.id)}>Delete</button>
+                  <button disabled={false} onClick={e => setCurrentArticleId(art)}>Edit</button>
+                  <button disabled={false} onClick={evt => deleteArticle(art.article_id)}>Delete</button>
                 </div>
               </div>
             )
