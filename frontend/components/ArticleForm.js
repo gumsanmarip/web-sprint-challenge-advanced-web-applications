@@ -12,7 +12,12 @@ export default function ArticleForm(props) {
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
-  })
+    if (article) {
+      setValues(article)
+    } else {
+      setValues(initialFormValues)
+    }
+  }, [article])
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -24,18 +29,26 @@ export default function ArticleForm(props) {
     // ✨ implement
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
+    evt.preventDefault()
+    if (article) {
+      updateArticle(article.id, values)
+    } else {
+      postArticle(values)
+    }
+    setValues(initialFormValues)
   }
 
   const isDisabled = () => {
     // ✨ implement
     // Make sure the inputs have some values
+
   }
 
   return (
     // ✨ fix the JSX: make the heading display either "Edit" or "Create"
     // and replace Function.prototype with the correct function
     <form id="form" onSubmit={onSubmit}>
-      <h2>Create Article</h2>
+      <h2>{!article ? 'Create' : 'Edit'} Article</h2>
       <input
         maxLength={50}
         onChange={onChange}
