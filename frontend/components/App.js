@@ -137,8 +137,7 @@ export default function App() {
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <React.StrictMode>
-      {spinnerOn === true ? 
-      <Spinner on={spinnerOn}/> : null}
+      <Spinner on={spinnerOn}/> 
       <Message 
         message={message}
       />
