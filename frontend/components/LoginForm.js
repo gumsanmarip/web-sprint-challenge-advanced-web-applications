@@ -18,14 +18,7 @@ export default function LoginForm(props) {
   const onSubmit = evt => {
     evt.preventDefault()
     // ✨ implement
-    axios
-      .post('http://localhost:9000/api/login', values)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log({err});
-      })
+    login(values);
   }
 
   const isDisabled = () => {

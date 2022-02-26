@@ -35,7 +35,7 @@ export default function App() {
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
     window.localStorage.removeItem('token')
-    Message('Goodbye!');
+    setMessage('Goodbye!');
     redirectToLogin();
   }
 
@@ -46,16 +46,19 @@ export default function App() {
     // On success, we should set the token to local storage in a 'token' key,
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
+    setMessage("");
+    setSpinnerOn();
+
     axios.post(loginUrl, {username, password})
-    .then(res =>{
-      console.log(res);
-      window.localStorage.setItem('token', res.data.token)
-      message(res.data.token);
-      redirectToArticles();
-    })
-    .catch(err => {
-      debugger
-    })
+      .then(res => {
+        console.log(res);
+        window.localStorage.setItem('token', res.data.token);
+        redirectToArticles();
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    setSpinnerOff();  
   }
 
   const getArticles = () => {
@@ -69,7 +72,8 @@ export default function App() {
     // Don't forget to turn off the spinner!
     axiosWithAuth().get(articlesUrl)
       .then(res => {
-        setArticles(res.data.articles)
+        setArticles(res.data.articles);
+        setMessage(res.data.message);
       })
       .catch(err => {
         if (err.response.status == 401) {
@@ -78,20 +82,20 @@ export default function App() {
           debugger
         }
       })
-
   }
 
-  const postArticle = article => {
+  const postArticle = ({title, text, topic}) => {
     // ✨ implement
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
-    axiosWithAuth().post(articlesUrl, article)
+    axiosWithAuth().post(articlesUrl, {title, text, topic})
       .then(res => {
-        setArticles(articles.concat(res.data.article))
+        setArticles(articles.concat(res.data.article));
+        setMessage(res.data.message);
       })
       .catch(err => {
-        debugger
+        console.log(err);
       })
   }
 
@@ -102,11 +106,12 @@ export default function App() {
       .then(res => {
         setArticles(articles.map(art => {
           return (art.article_id == article_id) ? res.data.article : art
-        }))
-        setCurrentArticleId()
+        }));
+        setCurrentArticleId();
+        setMessage(res.data.message);
       })
       .catch(err => {
-        debugger
+        console.log(err);
       })
   }
 
@@ -116,18 +121,23 @@ export default function App() {
       .then(res => {
         setArticles(articles.filter((art) => {
           return art.article_id != article_id
-        }))
+        }));
+        setMessage(res.data.message);
       })
       .catch(err => {
-        debugger
+        console.log(err);
       })
   }
 
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <React.StrictMode>
-      <Spinner />
-      <Message />
+      <Spinner 
+        spinnerOn={spinnerOn}
+      />
+      <Message 
+        message={message}
+      />
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
         <h1>Advanced Web Applications</h1>
@@ -140,11 +150,10 @@ export default function App() {
           <Route path="articles" element={
             <>
               <ArticleForm 
-                article={articles.find((art) => {
-                  return art.id == currentArticleId
-                })}
                 postArticle={postArticle}
                 updateArticle={updateArticle}
+                currentArticleId={currentArticleId}
+                setCurrentArticleId={setCurrentArticleId}
               />
               <Articles 
                 articles={articles}
